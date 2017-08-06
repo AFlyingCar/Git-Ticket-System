@@ -128,8 +128,6 @@ public class GitUtil {
             String username = null;
             char[] password = null;
             
-            String encOrigin;
-            
             if(Configuration.isGuiEnabled()) {
                 UserPassGui upg = new UserPassGui();
                 upg.setVisible(true);
@@ -160,27 +158,7 @@ public class GitUtil {
                     origin += line;
                 }
                 
-                // Yeah, it's plain text, but fucking hell I've just spent like an hour and a half
-                //  trying to figure out how to fucking pass this piece of shit to git, only to find
-                //  out that it doesn't even accept the password through stdIn
-                // String newOrigin;
-                /*
-                if((username == null || username.isEmpty()) &&
-                   (password == null || password.length == 0))
-                    encOrigin = origin;
-                    // newOrigin = origin;
-                else
-                    encOrigin = SecurityUtil.encrypt("https://" + username + ":" + new String(password) + "@" + origin); //origin.split("//")[1]);
-                    // newOrigin = "https://" + username + ":" + new String(password) + "@" + origin.split("//")[1];
-                */
-                // System.out.println("HERE!");
                 SecurityUtil.writeOrigin("https://" + username + ":" + new String(password) + "@" + origin);
-                // System.out.println("DONE!");
-                /*
-                p = Runtime.getRuntime().exec(new String[] { "git", "remote", "set-url", "origin", newOrigin},
-                                              null, FileUtil.getProjectTicketDir());
-                p.waitFor();
-                */
             }
         } catch(IOException e) {
             e.printStackTrace();
