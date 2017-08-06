@@ -128,6 +128,8 @@ public class GitUtil {
             String username = null;
             char[] password = null;
             
+            String encOrigin;
+            
             if(Configuration.isGuiEnabled()) {
                 UserPassGui upg = new UserPassGui();
                 upg.setVisible(true);
@@ -151,8 +153,9 @@ public class GitUtil {
                                                   null, new File(FileUtil.getGitDir()));
             BufferedReader stdInput= new BufferedReader(new InputStreamReader(p.getInputStream()));
             String origin = "";
-        
-            if(p.waitFor() == 0) {
+            
+            int wf = p.waitFor();
+            if(wf == 0 || wf == 128) { // TODO: REMOVE THIS 128 CHECK IT IS ONLY HERE FOR DEBUGGING
                 for (String line = ""; line != null; line = stdInput.readLine()) {
                     origin += line;
                 }
@@ -160,16 +163,24 @@ public class GitUtil {
                 // Yeah, it's plain text, but fucking hell I've just spent like an hour and a half
                 //  trying to figure out how to fucking pass this piece of shit to git, only to find
                 //  out that it doesn't even accept the password through stdIn
-                String newOrigin;
+                // String newOrigin;
+                /*
                 if((username == null || username.isEmpty()) &&
                    (password == null || password.length == 0))
-                    newOrigin = origin;
+                    encOrigin = origin;
+                    // newOrigin = origin;
                 else
-                    newOrigin = "https://" + username + ":" + new String(password) + "@" + origin.split("//")[1];
-            
+                    encOrigin = SecurityUtil.encrypt("https://" + username + ":" + new String(password) + "@" + origin); //origin.split("//")[1]);
+                    // newOrigin = "https://" + username + ":" + new String(password) + "@" + origin.split("//")[1];
+                */
+                // System.out.println("HERE!");
+                SecurityUtil.writeOrigin("https://" + username + ":" + new String(password) + "@" + origin);
+                // System.out.println("DONE!");
+                /*
                 p = Runtime.getRuntime().exec(new String[] { "git", "remote", "set-url", "origin", newOrigin},
                                               null, FileUtil.getProjectTicketDir());
                 p.waitFor();
+                */
             }
         } catch(IOException e) {
             e.printStackTrace();
@@ -257,16 +268,19 @@ public class GitUtil {
             fixRemote();
         }
         
-        return pull() && push();
+        String origin = SecurityUtil.readOrigin();
+        
+        return pull(origin) && push(origin);
     }
     
     /**
      * Pushes the copied repository's _Tickets branch to the remote origin if the branch exists.
      * @return true if the push was successful, false otherwise.
      */
-    public static boolean push() {
+    public static boolean push(String origin) {
         try {
-            Process p = Runtime.getRuntime().exec(new String[] { "git", "push", "-u", "origin", "_Tickets" },
+            // Process p = Runtime.getRuntime().exec(new String[] { "git", "push", "-u", "origin", "_Tickets" },
+            Process p = Runtime.getRuntime().exec(new String[] { "git", "push", "--repo=\"" + origin + "\""},
                                                   null, FileUtil.getProjectTicketDir());
             
             if (p != null) {
@@ -287,9 +301,10 @@ public class GitUtil {
      * Pulls the copied repository's _Tickets branch from the remote origin if the branch exists.
      * @return true if the pull was successful, false otherwise.
      */
-    public static boolean pull() {
+    public static boolean pull(String origin) {
         try {
-            Process p = Runtime.getRuntime().exec(new String[] { "git", "pull", "origin", "_Tickets" },
+            // Process p = Runtime.getRuntime().exec(new String[] { "git", "pull", "origin", "_Tickets" },
+            Process p = Runtime.getRuntime().exec(new String[] { "git", "pull", "\"" + origin + "\"", "_Tickets"},
                                                   null, FileUtil.getProjectTicketDir());
             
             if(p != null) {
