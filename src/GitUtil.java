@@ -253,6 +253,7 @@ public class GitUtil {
     
     /**
      * Pushes the copied repository's _Tickets branch to the remote origin if the branch exists.
+     * @param origin The origin to push to.
      * @return true if the push was successful, false otherwise.
      */
     public static boolean push(String origin) {
@@ -277,6 +278,7 @@ public class GitUtil {
     
     /**
      * Pulls the copied repository's _Tickets branch from the remote origin if the branch exists.
+     * @param origin  The origin to pull from.
      * @return true if the pull was successful, false otherwise.
      */
     public static boolean pull(String origin) {
