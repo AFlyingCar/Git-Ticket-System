@@ -47,10 +47,12 @@ public class StartGui extends JFrame {
 		listTicketsButton.addActionListener((ActionEvent event) -> {
             EventQueue.invokeLater(() -> {
                 ListTicketsGui ltg = ListTicketsGui.getInstance();
-                ltg.setVisible(true);
                 
+                // Update before opening the gui
                 ltg.updateTicketList();
                 ltg.updateTicketTable();
+                
+                ltg.setVisible(true);
             });
         });
 		
