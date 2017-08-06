@@ -1,5 +1,4 @@
 import java.io.DataInputStream;
-import java.io.DataOutputStream;
 import java.io.EOFException;
 import java.io.File;
 import java.io.FileInputStream;
@@ -31,7 +30,7 @@ public class SecurityUtil {
             
             if(file.exists()) {
                 CipherOutputStream out = new CipherOutputStream(new FileOutputStream(file), getEncryptionCipher());
-                System.out.println(origin);
+                // System.out.println(origin);
                 out.write(origin.getBytes("UTF8"));
                 
                 out.close();
