@@ -18,11 +18,31 @@ import javax.crypto.KeyGenerator;
 import javax.crypto.NoSuchPaddingException;
 import javax.crypto.SecretKey;
 
+/** 
+ * @author Tyler Robbins
+ * @version 1.0
+ * @since 1.1
+ */
 public class SecurityUtil {
+    /**
+     * The encryption cipher
+     */
     private static Cipher enccipher = null;
+    
+    /**
+     * The decryption cipher
+     */
     private static Cipher deccipher = null;
+    
+    /**
+     * The secret key to use for encrypting and decrypting
+     */
     private static SecretKey key = null;
     
+    /**
+     * Writes an origin string to a file called .origin in the project ticket directory.
+     * @param origin The origin to write.
+     */
     public static void writeOrigin(String origin) {
         try {
             File file = new File(FileUtil.getProjectTicketDir(), ".origin");
@@ -42,6 +62,10 @@ public class SecurityUtil {
         }
     }
     
+    /**
+     * Reads an origin string from a file called .origin in the project ticket directory.
+     * @return The origin string read or null if the read was unsuccessful.
+     */
     public static String readOrigin() {
         try {
             File file = new File(FileUtil.getProjectTicketDir(), ".origin");            
@@ -70,6 +94,11 @@ public class SecurityUtil {
         return null;
     }
     
+    /**
+     * Gets the secret key to be used for encrypting and decrypting. If it exists, then a file in the project ticket directory named
+     *  .key will be read for the key. Otherwise, a new key is generated and written to the .key file.
+     * @return The SecretKey to be used, null if reading a key and generating a key were failures.
+     */
     protected static SecretKey getSecretKey() {
         if(key == null) {
             try {
@@ -108,6 +137,10 @@ public class SecurityUtil {
         return key;
     }
     
+    /**
+     * Gets the encryption cipher to use when encrypting data, or generates one if it hasn't been generated yet.
+     * @return The Cipher for encrypting data.
+     */
     protected static Cipher getEncryptionCipher() {
         if(enccipher == null) {
             try {
@@ -130,6 +163,10 @@ public class SecurityUtil {
         return enccipher;
     }
     
+    /**
+     * Gets the decryption cipher to use when decrypting data, or generates one if it hasn't been generated yet.
+     * @return The Cipher for decrypting data.
+     */
     protected static Cipher getDecryptionCipher() {
         if(deccipher == null) {
             try {
@@ -152,6 +189,11 @@ public class SecurityUtil {
         return deccipher;
     }
     
+    /**
+     * Encrypts a string.
+     * @param str The string to encrypt.
+     * @return The encrypted data as a byte[], or null if an error occurred.
+     */
     public static byte[] encrypt(String str) {
         try {
             if(getEncryptionCipher() != null) {
@@ -168,6 +210,11 @@ public class SecurityUtil {
         return null;
     }
     
+    /**
+     * Decrypts a string.
+     * @param str The data to decrypt
+     * @return The decrypted data as a UTF-8 string or null if an error occurred.
+     */
     public static String decrypt(byte[] str) {
         try {
             if(getDecryptionCipher() != null) {
