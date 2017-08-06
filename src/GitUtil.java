@@ -153,7 +153,7 @@ public class GitUtil {
             String origin = "";
             
             int wf = p.waitFor();
-            if(wf == 0 || wf == 128) { // TODO: REMOVE THIS 128 CHECK IT IS ONLY HERE FOR DEBUGGING
+            if(wf == 0) {
                 for (String line = ""; line != null; line = stdInput.readLine()) {
                     origin += line;
                 }
