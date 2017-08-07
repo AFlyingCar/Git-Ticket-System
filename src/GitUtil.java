@@ -2,6 +2,7 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.PrintStream;
 import java.util.Scanner;
 
 import javax.swing.JOptionPane;
@@ -52,6 +53,27 @@ public class GitUtil {
                     } else {
                         p = Runtime.getRuntime().exec(new String[] { "git", "checkout","_Tickets" }, null, projectDir);
                         p.waitFor();
+                    }
+                    
+                    try {
+                        File gitignore = new File(projectDir, ".gitignore");
+                        if(!gitignore.exists()) gitignore.createNewFile();
+                        if(gitignore.exists()) {
+                            PrintStream out = new PrintStream(gitignore);
+                            
+                            out.println(".gitignore");
+                            out.println(".key");
+                            out.println(".origin");
+                            
+                            out.close();
+                        } else {
+                            // If the .gitignore file fails to be created, then we'll just skip it and issue a warning.
+                            System.err.println("Failed to create .gitignore file, which is necessarry for safety, but not a fatal error. Tread lightly.");
+                        }
+                    } catch(IOException e) {
+                        // We do another IOException so that we can still continue if this step fails
+                        System.err.println("Failed to create .gitignore file, which is necessarry for safety, but not a fatal error. Tread lightly.");
+                        e.printStackTrace();
                     }
                     
                     fixRemote();
